@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -18,6 +18,64 @@
   </style>
 </head>
 <body>
+  <script>
+    function setCookie(name, value, days) {
+      var expires = "";
+      if (days) {
+        var date = new Date();
+        date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+        expires = "; expires=" + date.toUTCString();
+      }
+      document.cookie = name + "=" + (value || "") + expires + "; path=/";
+    }
+
+    function getCookie(name) {
+      var nameEQ = name + "=";
+      var ca = document.cookie.split(';');
+      for (var i = 0; i < ca.length; i++) {
+        var c = ca[i];
+        while (c.charAt(0) === ' ') c = c.substring(1, c.length);
+        if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
+      }
+      return null;
+    }
+
+    function eraseCookie(name) {
+      document.cookie = name + '=; Max-Age=-99999999;';
+    }
+
+    // Default activation code
+    let activationCode = getCookie("activationCode") || "0000";
+
+    function promptForCode() {
+      let userCode = prompt("Enter activation code:");
+
+      if (userCode === activationCode) {
+        alert("Access granted!");
+
+        let changeCode = confirm("Do you want to change the activation code?");
+
+        if (changeCode) {
+          let newCode = prompt("Enter new activation code:");
+
+          if (newCode) {
+            activationCode = newCode;
+            setCookie("activationCode", newCode, 7);  // Store the new code in cookies for 7 days
+            alert("Activation code successfully changed!");
+          } else {
+            alert("Invalid code. Activation code not changed.");
+          }
+        }
+      } else {
+        alert("Invalid activation code. Try again.");
+        promptForCode();
+      }
+    }
+
+    // Prompt for activation code on page load
+    window.onload = promptForCode;
+  </script>
+  
   <iframe src="https://win11-emu-react.vercel.app/"></iframe>
 </body>
 </html>
